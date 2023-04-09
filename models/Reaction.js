@@ -16,9 +16,16 @@ const reactionSchema = new Schema (
             required: true,
         },
         createAt: {
-            tpye: Date,
+            type: Date,
             default: Date.now,
-            get: (date) => timeSince(date),
+            get: function(date) {
+                return date.toLocaleString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  hour: 'numeric',
+                  minute: 'numeric',
+                  hour12: true
+                })}
         },
     },
     {

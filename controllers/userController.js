@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Thought = require('../models/Thought');
 
 module.exports = {
     // get all users
@@ -10,13 +11,18 @@ module.exports = {
     // get single user
     getSingleUser(req, res) {
         User.findOne({ _id: req.params.userId })
-            .select('-__v')
+            .populate({ path: 'thoughts', select: '-__v' })
+            .populate({ path: 'friends', select: '-__v' })
+            //.populate('thoughts')
             .then((user) =>
                 !user
                     ? res.status(404).json({ message: 'No user with that ID' })
                     : res.json(user)
             )
-            .catch((err) => res.status(500).json(err));
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json(err)
+            });
     },
     // create a new user
     createUser(req, res) {
@@ -39,55 +45,52 @@ module.exports = {
             .catch((err) => res.status(500).json(err));
     },
     // remove a user
+    // https://stackoverflow.com/questions/70398602/mongoose-deletemany-using-id-on-nodejs
+    // https://stackoverflow.com/questions/18566590/remove-multiple-documents-from-mongo-in-a-single-query
     removeUser(req, res) {
-        User.findOneAndDelete({ _id: req.params.userId })
-            .then((user) =>
-                !user
-                    ? res.status(404).json({ message: 'No user with that ID' })
-                    : res.json(user)
-            )
-            .catch((err) => res.status(500).json(err));
+        User.findOne({ _id: req.params.userId })
+            .then((user) => {
+                if (!user) {
+                    return res.status(404).json({ message: 'No user with that ID' });
+                }
+                const thoughtList = user.thoughts.map((thought) => thought._id); //get and create arrayList of thoughts ids of that user
+                return Thought.deleteMany({ _id: { $in: thoughtList } }) //delete thoughts that are 
+                    .then(() =>
+                        user.delete() //after deleting all related thoughts, then finally delete that user
+                    );
+            })
+            .then(() => res.json({ message: 'User removed' }))
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json(err)
+            });
     },
     // add new friend to friendlist
     addNewFriend(req, res) {
         User.findOneAndUpdate(
             { _id: req.params.userId },
-            { $addToSet: { friends: req.body } },
+            { $addToSet: { friends: req.params.friendId } },
             { runValidators: true, new: true }
-          )
-            .then((video) =>
-              !video
-                ? res.status(404).json({ message: 'No User with this id!' })
-                : res.json(video)
+        )
+            .then((user) =>
+                !user
+                    ? res.status(404).json({ message: 'No User with this id!' })
+                    : res.json(user)
             )
             .catch((err) => res.status(500).json(err));
     },
     // remove a friend from friendlist
-    removeFriend(req, res){
+    removeFriend(req, res) {
         User.findOneAndUpdate(
-            { _id: req.params.videoId },
-            { $pull: { friends: { _id: req.params.friendId } } }, //friend uses User model, so use _id matches to friendId
+            { _id: req.params.userId },
+            { $pull: { friends: req.params.friendId } }, //friend uses User model, so use _id matches to friendId
             { runValidators: true, new: true }
-          )
-            .then((video) =>
-              !video
-                ? res.status(404).json({ message: 'No video with this id!' })
-                : res.json(video)
+        )
+            .then((user) =>
+                !user
+                    ? res.status(404).json({ message: 'No User with this id!' })
+                    : res.json({ message: 'Friend removed' })
             )
             .catch((err) => res.status(500).json(err));
     },
 };
-
-/*
-// /api/users
-router.route('/').get(getUsers).post(createUser);
-
-// /api/users/:userId
-router.route('/:userId').get(getSingleUser).put(updateUser).delete(removeUser);
-
-// /api/users/:userId/friends/
-router.route(':userId/friends/:friendId').post(addNewFriend);
-
-// /api/users/:userId/friends/:friendId
-router.route(':userId/friends/:friendId').delete(removeFriend);
-*/

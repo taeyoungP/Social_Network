@@ -1,14 +1,10 @@
-# 18 NoSQL: Social Network API
+# Social Network API through NoSQL
 
-## Your Task
+## Task
 
-MongoDB is a popular choice for many social networks due to its speed with large amounts of data and flexibility with unstructured data. Over the last part of this course, you’ll use several of the technologies that social networking platforms use in their full-stack applications. Because the foundation of these applications is data, it’s important that you understand how to build and structure the API first.
+MongoDB is a popular choice for many social networks due to its speed with large amounts of data and flexibility with unstructured data. In this project, several of the technologies will be used that social networking platforms use in their full-stack applications. Because the foundation of these applications is data, it’s important to understand how to build and structure the API first.
 
-Your Challenge is to build an API for a social network web application where users can share their thoughts, react to friends’ thoughts, and create a friend list. You’ll use Express.js for routing, a MongoDB database, and the Mongoose ODM. In addition to using the [Express.js](https://www.npmjs.com/package/express) and [Mongoose](https://www.npmjs.com/package/mongoose) packages, you may also optionally use a JavaScript date library of your choice or the native JavaScript `Date` object to format timestamps.
-
-No seed data is provided, so you’ll need to create your own data using Insomnia after you’ve created your API.
-
-Because this application won’t be deployed, you’ll also need to create a walkthrough video that demonstrates its functionality and all of the following acceptance criteria being met. You’ll need to submit a link to the video and add it to the README of your project.
+The challenge for this task is to build an API for a social network web application where users can share their thoughts, react to friends’ thoughts, and create a friend list. 
 
 ## User Story
 
@@ -56,13 +52,11 @@ The following animation shows the POST and DELETE routes for a user’s friend l
 
 In addition to this, your walkthrough video should show the POST and DELETE routes for reactions to thoughts being tested in Insomnia.
 
-## Getting Started
+## Video Demonstration
 
-Be sure to have MongoDB installed on your machine. Follow the [MongoDB installation guide on The Full-Stack Blog](https://coding-boot-camp.github.io/full-stack/mongodb/how-to-install-mongodb) to install MongoDB locally.
+* Link to Video Demonstration: 
 
-Use the following guidelines to set up your models and API routes:
-
-### Models
+### Structure for Models
 
 **User**:
 
@@ -83,10 +77,6 @@ Use the following guidelines to set up your models and API routes:
 
 * `friends`
   * Array of `_id` values referencing the `User` model (self-reference)
-
-**Schema Settings**:
-
-Create a virtual called `friendCount` that retrieves the length of the user's `friends` array field on query.
 
 ---
 
@@ -109,10 +99,6 @@ Create a virtual called `friendCount` that retrieves the length of the user's `f
 * `reactions` (These are like replies)
   * Array of nested documents created with the `reactionSchema`
 
-**Schema Settings**:
-
-Create a virtual called `reactionCount` that retrieves the length of the thought's `reactions` array field on query.
-
 ---
 
 **Reaction** (SCHEMA ONLY)
@@ -134,10 +120,6 @@ Create a virtual called `reactionCount` that retrieves the length of the thought
   * Date
   * Set default value to the current timestamp
   * Use a getter method to format the timestamp on query
-
-**Schema Settings**:
-
-This will not be a model, but rather will be used as the `reaction` field's subdocument schema in the `Thought` model.
 
 ### API Routes
 
@@ -201,6 +183,11 @@ This will not be a model, but rather will be used as the `reaction` field's subd
 * `POST` to create a reaction stored in a single thought's `reactions` array field
 
 * `DELETE` to pull and remove a reaction by the reaction's `reactionId` value
+
+## Credits
+* [Express.js](https://www.npmjs.com/package/express)
+* [Mongoose](https://www.npmjs.com/package/mongoose)
+* [Insomnia](https://insomnia.rest)
 
 ## Grading Requirements
 

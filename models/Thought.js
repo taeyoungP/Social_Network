@@ -11,7 +11,7 @@ const thoughtSchema = new Schema(
         },
         createAt: {
             type: Date,
-            default: Date.now(),
+            default: Date.now,
             get: (date) => timeSince(date), // Use a getter method to format the timestamp on query
         },
         username: {
@@ -19,6 +19,12 @@ const thoughtSchema = new Schema(
             required: true,
         },
         reactions: [reactionSchema],
+    },
+    {
+        toJSON: {
+            virtuals: true,
+          },
+          id: false,        
     }
 );
 
