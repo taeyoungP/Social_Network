@@ -12,7 +12,15 @@ const thoughtSchema = new Schema(
         createAt: {
             type: Date,
             default: Date.now,
-            get: (date) => timeSince(date), // Use a getter method to format the timestamp on query
+            get: function(date) {
+                return date.toLocaleString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric',
+                  hour: 'numeric',
+                  minute: 'numeric',
+                  hour12: true
+                })}
         },
         username: {
             type: String,
@@ -23,8 +31,9 @@ const thoughtSchema = new Schema(
     {
         toJSON: {
             virtuals: true,
-          },
-          id: false,        
+            getters: true,
+        },
+        id: false,
     }
 );
 
